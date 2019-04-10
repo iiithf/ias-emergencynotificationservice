@@ -1,0 +1,30 @@
+{
+  "name": "ias-emergencynotificationservice",
+  "version": "0.1.0",
+  "description": "This should send emails to a list of people whenever the distance sensor reaches a value below 200.",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iiithf/ias-emergencynotificationservice.git"
+  },
+  "keywords": [
+    "ias",
+    "emergency",
+    "notification",
+    "service"
+  ],
+  "author": "wolfram77@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iiithf/ias-emergencynotificationservice/issues"
+  },
+  "homepage": "https://github.com/iiithf/ias-emergencynotificationservice#readme",
+  "dependencies": {
+    "boolean": "^1.0.0",
+    "express": "^4.16.4",
+    "nodemailer": "^6.1.0"
+  }
+}
