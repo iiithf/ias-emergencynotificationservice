@@ -67,7 +67,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/distance', (req, res) => {
+app.post('/status', (req, res) => {
   onData(req.body);
 });
 app.post('/email', (req, res, next) => {
