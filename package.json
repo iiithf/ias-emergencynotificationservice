@@ -1,6 +1,6 @@
 {
   "name": "ias-emergencynotificationservice",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This should send emails to a list of people whenever the distance sensor reaches a value below 200.",
   "main": "index.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "boolean": "^1.0.0",
     "express": "^4.16.4",
+    "needle": "^2.3.0",
     "nodemailer": "^6.1.0"
   }
 }

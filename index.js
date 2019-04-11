@@ -7,11 +7,19 @@ const http = require('http');
 
 const E = process.env;
 const PORT = parseInt(E['PORT']||'8000', 10);
-const MAILHOST = E['MAILHOST']||'smtp.gmail.com';
-const MAILPORT = parseInt(E['MAILPORT']||'587', 10);
-const MAILSECURE = boolean(E['MAILSECURE']||'false');
-const MAILUSER = E['MAILUSER']||'';
-const MAILPASS = E['MAILPASS']||'';
+const TRANSPORTHOST = E['TRANSPORTHOST']||'smtp.gmail.com';
+const TRANSPORTPORT = parseInt(E['TRANSPORTPORT']||'587', 10);
+const TRANSPORTSECURE = boolean(E['TRANSPORTSECURE']||'false');
+const TRANSPORTUSER = E['TRANSPORTUSER']||'';
+const TRANSPORTPASS = E['TRANSPORTPASS']||'';
+const MAILFROM = E['MAILFROM']||'';
+const MAILTO = E['MAILTO']||'';
+const MAILSUBJECT = E['MAILSUBJECT']||'';
+const MAILTEXT = E['MAILTEXT']||'';
+const MAILHTML = E['MAILHTML']||'';
+const SOURCE = E['SOURCE']||'';
+const DATARATE = parseInt(E['DATARATE']||'1000', 10);
+const DISTANCEMIN = parseInt(E['DISTANCEMIN']||'200', 10);
 const app = express();
 const server = http.createServer(app);
 
@@ -19,11 +27,34 @@ const server = http.createServer(app);
 
 function emailSend(mail, transport) {
   var transporter = nodemailer.createTransport(Object.assign({
-    host: MAILHOST, port: MAILPORT, secure: MAILSECURE,
-    auth: {user: MAILUSER, pass: MAILPASS}
+    host: TRANSPORTHOST, port: TRANSPORTPORT, secure: TRANSPORTSECURE,
+    auth: {user: TRANSPORTUSER, pass: TRANSPORTPASS},
   }, transport));
+  mail = Object.assign({
+    from: MAILFROM,
+    to: MAILTO,
+    subject: MAILSUBJECT,
+    text: MAILTEXT,
+    html: MAILHTML,
+  });
+  console.log('emailSend()', mail);
   return transporter.sendMail(mail);
 }
+
+function onData(data) {
+  var {distance, mail, transport} = data;
+  if(distance>=DISTANCEMIN) return;
+  mail = Object.assign({content: JSON.stringify(res.body, null, 2)}, mail);
+  return emailSend(mail, transport);
+}
+
+async function onInterval() {
+  if(!SOURCE) return;
+  var res = await needle('get', SOURCE);
+  console.log('SOURCE', SOURCE, res.body);
+  return onData(res.body);
+}
+setInterval(onInterval, DATARATE);
 
 
 
@@ -36,6 +67,9 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post('/distance', (req, res) => {
+  onData(req.body);
+});
 app.post('/email', (req, res, next) => {
   var {mail, transport} = req.body;
   emailSend(mail, transport).then((ans) => res.json(ans), next);
